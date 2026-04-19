@@ -1,26 +1,34 @@
 import re
 
-from services import get_user_by_email
+from typing import Any, Mapping
 
 
 class ValidationError(Exception):
     pass
 
 
-def validate_registration_data(data: dict[str, str]) -> None:
-    required_fields = ["forename", "surname", "email", "password"]
+def validate_required_fields(data: Mapping[str, Any], required_fields: list[str]) -> None:
     for field in required_fields:
-        if not data.get(field):
+        value = data.get(field)
+        if value is None or (isinstance(value, str) and not value.strip()):
             raise ValidationError(f"Field {field} is missing.")
 
 
-def validate_email(email: str) -> None:
-    if len(email) > 256 or not re.match(r'^[^@]+@[^@]+\.[^@]+$', email):
+def validate_forename(forename: Any) -> None:
+    if not isinstance(forename, str) or len(forename) > 256:
+        raise ValidationError("Invalid forename.")
+
+
+def validate_surname(surname: Any) -> None:
+    if not isinstance(surname, str) or len(surname) > 256:
+        raise ValidationError("Invalid surname.")
+
+
+def validate_email(email: Any) -> None:
+    if not isinstance(email, str) or len(email) > 256 or not re.match(r'^[^@]+@[^@]+\.[^@]+$', email):
         raise ValidationError("Invalid email.")
-    if get_user_by_email(email):
-        raise ValidationError("Email already exists.")
 
 
-def validate_password(password: str) -> None:
-    if len(password) < 8 or len(password) > 256:
+def validate_password(password: Any) -> None:
+    if not isinstance(password, str) or len(password) < 8 or len(password) > 256:
         raise ValidationError("Invalid password.")
