@@ -45,3 +45,12 @@ def authenticate_user(email: str, password: str) -> User:
     if not user or not verify_password(pwhash=user.password, password=password):
         raise ServiceError("Invalid credentials.")
     return user
+
+
+def delete_user_by_email(email: str) -> None:
+    user = get_user_by_email(email)
+    if not user:
+        raise ServiceError("Unknown user.")
+
+    db.session.delete(user)
+    db.session.commit()

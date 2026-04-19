@@ -2,7 +2,7 @@ from flask import Blueprint, Response, jsonify, request
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 
 from security import create_token
-from services import ServiceError, authenticate_user, create_user
+from services import ServiceError, authenticate_user, create_user, delete_user_by_email
 from validation import (
     ValidationError,
     validate_forename,
@@ -82,3 +82,15 @@ def me() -> tuple[Response, int]:
         "identity": get_jwt_identity(),
         "claims": get_jwt()
     }), 200
+
+
+@auth_bp.route("/delete", methods=["POST"])
+@jwt_required()
+def delete() -> tuple[Response, int]:
+    try:
+        email = get_jwt_identity()
+        delete_user_by_email(email)
+    except ServiceError as e:
+        return jsonify(message=str(e)), 400
+
+    return jsonify(message="User deleted."), 200
