@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from extensions import db
 from models import User
+from security import hash_password, verify_password
 
 
 class ServiceError(Exception):
@@ -22,7 +23,7 @@ def create_user(forename: str, surname: str, email: str, password: str, role: st
         forename=forename,
         surname=surname,
         email=email,
-        password=password,
+        password=hash_password(password),
         role=role
     )
 
@@ -41,6 +42,6 @@ def create_user(forename: str, surname: str, email: str, password: str, role: st
 
 def authenticate_user(email: str, password: str) -> User:
     user = get_user_by_email(email)
-    if not user or user.password != password:
+    if not user or not verify_password(pwhash=user.password, password=password):
         raise ServiceError("Invalid credentials.")
     return user
