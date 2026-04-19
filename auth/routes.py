@@ -1,5 +1,7 @@
 from flask import Blueprint, Response, jsonify, request
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 
+from security import create_token
 from services import ServiceError, authenticate_user, create_user
 from validation import (
     ValidationError,
@@ -66,9 +68,17 @@ def login() -> tuple[Response, int]:
         )
     except (ValidationError, ServiceError) as e:
         return jsonify(message=str(e)), 400
+    
+    token = create_token(user)
 
+    return jsonify(accessToken=token), 200
+
+
+# temporary route for testing
+@auth_bp.route("/me", methods=["GET"])
+@jwt_required()
+def me() -> tuple[Response, int]:
     return jsonify({
-        "id": user.id,
-        "email": user.email,
-        "role": user.role
+        "identity": get_jwt_identity(),
+        "claims": get_jwt()
     }), 200

@@ -1,9 +1,7 @@
-import os
-
 from flask import Flask
 
 from config import Config
-from extensions import db
+from extensions import db, jwt
 
 
 def create_app() -> Flask:
@@ -11,6 +9,7 @@ def create_app() -> Flask:
     app.config.from_object(Config)
 
     db.init_app(app)
+    jwt.init_app(app)
 
     from routes import auth_bp
     app.register_blueprint(auth_bp)
