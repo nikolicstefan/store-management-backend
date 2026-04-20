@@ -5,11 +5,11 @@ from security import create_token
 from services import ServiceError, authenticate_user, create_user, delete_user_by_email
 from validation import (
     ValidationError,
-    validate_forename,
-    validate_required_fields,
     validate_email,
+    validate_forename,
     validate_password,
-    validate_surname
+    validate_required_fields,
+    validate_surname,
 )
 
 auth_bp = Blueprint("auth", __name__)
@@ -36,11 +36,7 @@ def register_user(role: str) -> tuple[Response, int]:
     except (ValidationError, ServiceError) as e:
         return jsonify(message=str(e)), 400
 
-    return jsonify({
-        "id": user.id,
-        "email": user.email,
-        "role": user.role
-    }), 200
+    return jsonify(), 200
 
 
 @auth_bp.route("/register_customer", methods=["POST"])
@@ -93,4 +89,4 @@ def delete() -> tuple[Response, int]:
     except ServiceError as e:
         return jsonify(message=str(e)), 400
 
-    return jsonify(message="User deleted."), 200
+    return jsonify(),200

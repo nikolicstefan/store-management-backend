@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.exc import SQLAlchemyError
 
 from extensions import db
@@ -11,7 +9,7 @@ class ServiceError(Exception):
     pass
 
 
-def get_user_by_email(email: str) -> Optional[User]:
+def get_user_by_email(email: str) -> User | None:
     return User.query.filter_by(email=email).first()
 
 
@@ -35,7 +33,7 @@ def create_user(forename: str, surname: str, email: str, password: str, role: st
         db.session.rollback()
         if get_user_by_email(email):
             raise ServiceError("Email already exists.") from e
-        raise ServiceError("Failed to create user.") from e
+        raise
 
     return user
 

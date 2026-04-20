@@ -1,4 +1,6 @@
-from flask import Flask
+from http.client import HTTPException
+
+from flask import Flask, jsonify
 
 from config import Config
 from extensions import db, jwt
@@ -13,6 +15,12 @@ def create_app() -> Flask:
 
     from routes import auth_bp
     app.register_blueprint(auth_bp)
+
+    @app.errorhandler(Exception)
+    def handle_unexpected_error(e):
+        if isinstance(e, HTTPException):
+            return e
+        return jsonify(message="Internal server error."), 500
 
     with app.app_context():
         db.create_all()
