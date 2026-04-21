@@ -3,7 +3,7 @@ from http.client import HTTPException
 from flask import Flask, jsonify
 
 from config import Config
-from extensions import db, jwt
+from extensions import db, jwt, migrate
 
 
 def create_app() -> Flask:
@@ -12,6 +12,7 @@ def create_app() -> Flask:
 
     db.init_app(app)
     jwt.init_app(app)
+    migrate.init_app(app, db)
 
     from routes import auth_bp
     app.register_blueprint(auth_bp)
@@ -21,9 +22,6 @@ def create_app() -> Flask:
         if isinstance(e, HTTPException):
             return e
         return jsonify(message="Internal server error."), 500
-
-    with app.app_context():
-        db.create_all()
 
     return app
 

@@ -25,17 +25,12 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     ports:
       - "5000:5000"
+    volumes:
+      - .:/app
     depends_on:
       auth-db:
         condition: service_healthy
         restart: true
-    develop:
-      watch:
-        - action: sync+restart
-          path: .
-          target: /app
-        - action: rebuild
-          path: ./requirements.txt
 
 volumes:
   auth-db-data:

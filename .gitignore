@@ -1,6 +1,9 @@
-venv/
+/venv/
 
-.vscode/*
-!.vscode/settings.json
+/.vscode/*
+!/vscode/settings.json
 
-.env
+/.env
+
+__pycache__/
+*.pyc
