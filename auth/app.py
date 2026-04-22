@@ -1,6 +1,5 @@
-from http.client import HTTPException
-
 from flask import Flask, jsonify
+from werkzeug.exceptions import HTTPException
 
 from config import Config
 from extensions import db, jwt, migrate

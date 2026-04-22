@@ -42,6 +42,7 @@ def authenticate_user(email: str, password: str) -> User:
     user = get_user_by_email(email)
     if not user or not verify_password(pwhash=user.password, password=password):
         raise ServiceError("Invalid credentials.")
+
     return user
 
 
