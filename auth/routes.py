@@ -2,7 +2,7 @@ from flask import Blueprint, Response, g, jsonify, request
 
 from decorators import user_required
 from security import create_token
-from services import ServiceError, authenticate_user, create_user, delete_user_by_email
+from services import ServiceError, add_user, authenticate_user, delete_user_by_email
 from validation import (
     ValidationError,
     validate_email,
@@ -26,7 +26,7 @@ def register_user(role: str) -> tuple[Response, int]:
         validate_email(data.get("email"))
         validate_password(data.get("password"))
 
-        user = create_user(
+        user = add_user(
             forename=data.get("forename"),
             surname=data.get("surname"),
             email=data.get("email"),

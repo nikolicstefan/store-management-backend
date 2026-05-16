@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 
 from extensions import db
-from models import User
+from models.user import User
 from security import hash_password, verify_password
 
 
@@ -13,7 +13,7 @@ def get_user_by_email(email: str) -> User | None:
     return User.query.filter_by(email=email).first()
 
 
-def create_user(forename: str, surname: str, email: str, password: str, role: str) -> User:
+def add_user(forename: str, surname: str, email: str, password: str, role: str) -> User:
     if get_user_by_email(email):
         raise ServiceError("Email already exists.")
 
