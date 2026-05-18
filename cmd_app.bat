@@ -30,7 +30,8 @@ exit /b 1
 :help
 echo Usage: .\cmd_app.bat [command]
 echo Commands:
-echo   up       Build and start the application
+echo   up       Build, apply the latest migrations, and start the application
 echo   down     Stop the application and remove containers, preserving volumes
-echo   reset    Stop the application, remove containers and volumes, then rebuild and start the application
+echo   reset    Stop the application, remove containers and volumes,
+echo            then rebuild, apply the latest migrations, and start the application
 exit /b 1
