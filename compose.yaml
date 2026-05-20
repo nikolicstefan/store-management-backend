@@ -1,2 +1,3 @@
 include:
   - ./auth/compose.yaml
+  - ./store/compose.yaml
