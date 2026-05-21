@@ -26,6 +26,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     ports:
       - "5001:5000"
+    volumes:
+      - ./common/migrations:/app/migrations
     depends_on:
       store-db:
         condition: service_healthy
