@@ -14,6 +14,25 @@ services:
       start_period: 30s
       timeout: 10s
   
+  store-migrations:
+    build:
+      context: .
+      dockerfile: owner/Dockerfile
+    environment:
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_URL: store-db
+      DATABASE_NAME: store
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    command: ["flask", "--app", "owner.app", "db", "upgrade"]
+    volumes:
+      - ./common/migrations:/app/migrations
+    depends_on:
+      store-db:
+        condition: service_healthy
+        restart: true
+    restart: "no"
+  
   owner:
     build:
       context: .
@@ -29,8 +48,8 @@ services:
     volumes:
       - ./common/migrations:/app/migrations
     depends_on:
-      store-db:
-        condition: service_healthy
+      store-migrations:
+        condition: service_completed_successfully
         restart: true
 
 volumes:
