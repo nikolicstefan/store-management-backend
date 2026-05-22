@@ -16,21 +16,21 @@ auth_bp = Blueprint("auth", __name__)
 
 
 def register_user(role: str) -> tuple[Response, int]:
-    data = request.get_json() or {}
+    body = request.get_json() or {}
     required_fields = ["forename", "surname", "email", "password"]
 
     try:
-        validate_required_fields(data, required_fields)
-        validate_forename(data.get("forename"))
-        validate_surname(data.get("surname"))
-        validate_email(data.get("email"))
-        validate_password(data.get("password"))
+        validate_required_fields(body, required_fields)
+        validate_forename(body.get("forename"))
+        validate_surname(body.get("surname"))
+        validate_email(body.get("email"))
+        validate_password(body.get("password"))
 
         user = add_user(
-            forename=data.get("forename"),
-            surname=data.get("surname"),
-            email=data.get("email"),
-            password=data.get("password"),
+            forename=body.get("forename"),
+            surname=body.get("surname"),
+            email=body.get("email"),
+            password=body.get("password"),
             role=role
         )
     except (ValidationError, ServiceError) as e:
@@ -51,16 +51,16 @@ def register_courier() -> tuple[Response, int]:
 
 @auth_bp.route("/login", methods=["POST"])
 def login() -> tuple[Response, int]:
-    data = request.get_json() or {}
+    body = request.get_json() or {}
     required_fields = ["email", "password"]
 
     try:
-        validate_required_fields(data, required_fields)
-        validate_email(data.get("email"))
+        validate_required_fields(body, required_fields)
+        validate_email(body.get("email"))
 
         user = authenticate_user(
-            email=data.get("email"),
-            password=data.get("password")
+            email=body.get("email"),
+            password=body.get("password")
         )
     except (ValidationError, ServiceError) as e:
         return jsonify(message=str(e)), 400

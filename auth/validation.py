@@ -7,9 +7,9 @@ class ValidationError(Exception):
     pass
 
 
-def validate_required_fields(data: Mapping[str, Any], required_fields: list[str]) -> None:
+def validate_required_fields(body: Mapping[str, Any], required_fields: list[str]) -> None:
     for field in required_fields:
-        value = data.get(field)
+        value = body.get(field)
         if value is None or (isinstance(value, str) and not value.strip()):
             raise ValidationError(f"Field {field} is missing.")
 
