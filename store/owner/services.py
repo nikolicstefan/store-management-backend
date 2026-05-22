@@ -3,10 +3,7 @@ from typing import Any
 from common.extensions import db
 from common.models.category import Category
 from common.models.product import Product
-
-
-class ServiceError(Exception):
-    pass
+from common.services import ServiceError
 
 
 def add_products(product_inputs: list[dict[str, Any]]) -> None:

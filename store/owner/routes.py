@@ -1,8 +1,9 @@
 from flask import Blueprint, Response, jsonify, request
 
 from common.decorators import role_required
+from common.services import ServiceError
 from common.validation import ValidationError
-from owner.services import ServiceError, add_products
+from owner.services import add_products
 from owner.validation import validate_file
 
 owner_bp = Blueprint("owner", __name__)
