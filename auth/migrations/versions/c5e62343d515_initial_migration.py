@@ -47,7 +47,7 @@ def upgrade():
                 "surname": "McDuck",
                 "email": "onlymoney@gmail.com",
                 "password": generate_password_hash("evenmoremoney"),
-                "role": "owner",
+                "role": "OWNER",
             }
         ]
     )

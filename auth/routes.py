@@ -27,10 +27,10 @@ def register_user(role: str) -> tuple[Response, int]:
         validate_password(body.get("password"))
 
         user = create_user(
-            forename=body.get("forename"),
-            surname=body.get("surname"),
-            email=body.get("email"),
-            password=body.get("password"),
+            forename=body["forename"],
+            surname=body["surname"],
+            email=body["email"],
+            password=body["password"],
             role=role
         )
     except (ValidationError, ServiceError) as e:
@@ -41,12 +41,12 @@ def register_user(role: str) -> tuple[Response, int]:
 
 @auth_bp.route("/register_customer", methods=["POST"])
 def register_customer() -> tuple[Response, int]:
-    return register_user("customer")
+    return register_user("CUSTOMER")
 
 
 @auth_bp.route("/register_courier", methods=["POST"])
 def register_courier() -> tuple[Response, int]:
-    return register_user("courier")
+    return register_user("COURIER")
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -59,8 +59,8 @@ def login() -> tuple[Response, int]:
         validate_email(body.get("email"))
 
         user = authenticate_user(
-            email=body.get("email"),
-            password=body.get("password")
+            email=body["email"],
+            password=body["password"]
         )
     except (ValidationError, ServiceError) as e:
         return jsonify(message=str(e)), 400

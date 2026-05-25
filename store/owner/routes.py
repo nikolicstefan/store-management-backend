@@ -10,7 +10,7 @@ owner_bp = Blueprint("owner", __name__)
 
 
 @owner_bp.route("/update", methods=["POST"])
-@role_required("owner")
+@role_required("OWNER")
 def update() -> tuple[Response, int]:
     file = request.files.get("file")
     try:
