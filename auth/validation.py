@@ -1,5 +1,4 @@
-import re
-
+from re import match
 from typing import Any, Mapping
 
 
@@ -26,7 +25,7 @@ def validate_surname(surname: Any) -> None:
 
 def validate_email(email: Any) -> None:
     regex = r'^[^@]+@[^@]+\.[^@]+$'
-    if not isinstance(email, str) or not email.strip() or len(email) > 256 or not re.match(regex, email):
+    if not isinstance(email, str) or not email.strip() or len(email) > 256 or not match(regex, email):
         raise ValidationError("Invalid email.")
 
 
