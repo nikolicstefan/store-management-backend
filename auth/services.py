@@ -9,12 +9,12 @@ class ServiceError(Exception):
     pass
 
 
-def get_user_by_email(email: str) -> User | None:
+def find_user(email: str) -> User | None:
     return User.query.filter_by(email=email).first()
 
 
-def add_user(forename: str, surname: str, email: str, password: str, role: str) -> User:
-    if get_user_by_email(email):
+def create_user(forename: str, surname: str, email: str, password: str, role: str) -> User:
+    if find_user(email):
         raise ServiceError("Email already exists.")
 
     user = User(
@@ -31,7 +31,7 @@ def add_user(forename: str, surname: str, email: str, password: str, role: str) 
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
-        if get_user_by_email(email):
+        if find_user(email):
             raise ServiceError("Email already exists.") from e
         raise
 
@@ -39,15 +39,15 @@ def add_user(forename: str, surname: str, email: str, password: str, role: str) 
 
 
 def authenticate_user(email: str, password: str) -> User:
-    user = get_user_by_email(email)
+    user = find_user(email)
     if not user or not verify_password(pwhash=user.password, password=password):
         raise ServiceError("Invalid credentials.")
 
     return user
 
 
-def delete_user_by_email(email: str) -> None:
-    user = get_user_by_email(email)
+def delete_user(email: str) -> None:
+    user = find_user(email)
     if not user:
         raise ServiceError("Unknown user.")
 

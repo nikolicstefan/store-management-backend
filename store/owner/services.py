@@ -6,7 +6,7 @@ from common.models.product import Product
 from common.services import ServiceError
 
 
-def add_products(product_inputs: list[dict[str, Any]]) -> None:
+def create_products(product_inputs: list[dict[str, Any]]) -> None:
     input_product_names = [product_input["name"] for product_input in product_inputs]
 
     existing_product = Product.query.filter(Product.name.in_(input_product_names)).first()

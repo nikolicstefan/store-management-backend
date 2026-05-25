@@ -3,7 +3,7 @@ from functools import wraps
 from flask import g, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from services import get_user_by_email
+from services import find_user
 
 
 def user_required():
@@ -12,7 +12,7 @@ def user_required():
         @jwt_required()
         def wrapper(*args, **kwargs):
             email = get_jwt_identity()
-            user = get_user_by_email(email)
+            user = find_user(email)
 
             if not user:
                 return jsonify(message="Unknown user."), 400
