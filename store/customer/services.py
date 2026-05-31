@@ -1,7 +1,9 @@
+from datetime import UTC, datetime
 from typing import Any
 
-from common.models.category import Category
-from common.models.product import Product
+from common.extensions import db
+from common.models import *
+from common.services import ServiceError
 
 
 def search_products(name: str, category: str) -> tuple[list[dict[str, Any]], list[str]]:
@@ -40,3 +42,48 @@ def search_products(name: str, category: str) -> tuple[list[dict[str, Any]], lis
         category.name
         for category in categories
     ]
+
+
+def find_product(product_id: int) -> Product | None:
+    return Product.query.get(product_id)
+
+
+def create_order(requests: list[dict[str, Any]], customer_email: str) -> Order:
+    order = Order(
+        timestamp=datetime.now(UTC),
+        status="CREATED",
+        total_price=0.0,
+        customer_email=customer_email,
+        courier_email=None
+    )
+
+    total_price = 0.0
+
+    for request_number, request in enumerate(requests):
+        product = find_product(request["id"])
+
+        if product is None:
+            raise ServiceError(f"Invalid product for request number {request_number}.")
+
+        quantity = request["quantity"]
+        price = product.price
+        total_price += price * quantity
+
+        OrderItem(
+            price=price,
+            quantity=quantity,
+            order=order,
+            product=product
+        )
+
+    order.total_price = total_price
+
+    db.session.add(order)
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return order

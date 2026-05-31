@@ -15,5 +15,10 @@ class Product(db.Model):
         back_populates="products"
     )
 
+    order_items = db.relationship(
+        "OrderItem",
+        back_populates="product"
+    )
+
     def __repr__(self) -> str:
         return f"<Product id={self.id} name={self.name}>"

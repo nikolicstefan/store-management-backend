@@ -1,8 +1,7 @@
 from typing import Any
 
 from common.extensions import db
-from common.models.category import Category
-from common.models.product import Product
+from common.models import *
 from common.services import ServiceError
 
 
