@@ -49,6 +49,16 @@ def find_product(product_id: int) -> Product | None:
 
 
 def create_order(requests: list[dict[str, Any]], customer_email: str) -> Order:
+    order_item_inputs = []
+
+    for request_number, request in enumerate(requests):
+        product = find_product(request["id"])
+
+        if product is None:
+            raise ServiceError(f"Invalid product for request number {request_number}.")
+
+        order_item_inputs.append((product, request["quantity"]))
+
     order = Order(
         timestamp=datetime.now(UTC),
         status="CREATED",
@@ -59,25 +69,18 @@ def create_order(requests: list[dict[str, Any]], customer_email: str) -> Order:
 
     total_price = 0.0
 
-    for request_number, request in enumerate(requests):
-        product = find_product(request["id"])
-
-        if product is None:
-            raise ServiceError(f"Invalid product for request number {request_number}.")
-
-        quantity = request["quantity"]
+    for product, quantity in order_item_inputs:
         price = product.price
         total_price += price * quantity
 
         OrderItem(
-            price=price,
-            quantity=quantity,
             order=order,
-            product=product
+            product=product,
+            price=price,
+            quantity=quantity
         )
 
     order.total_price = total_price
-
     db.session.add(order)
 
     try:

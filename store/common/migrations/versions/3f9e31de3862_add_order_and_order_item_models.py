@@ -29,10 +29,10 @@ def upgrade():
     )
     op.create_table('order_items',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('order_id', sa.Integer(), nullable=False),
     sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
     sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
     sa.PrimaryKeyConstraint('id')
