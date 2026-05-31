@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 
 from extensions import db
-from models.user import User
+from models import *
 from security import hash_password, verify_password
 
 
