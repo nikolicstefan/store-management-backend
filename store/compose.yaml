@@ -5,6 +5,8 @@ services:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: store
+    networks:
+      - store-net
     volumes:
       - store-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -18,13 +20,15 @@ services:
     build:
       context: .
       dockerfile: owner/Dockerfile
+    command: ["flask", "--app", "owner.app", "db", "upgrade"]
     environment:
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_URL: store-db
       DATABASE_NAME: store
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-    command: ["flask", "--app", "owner.app", "db", "upgrade"]
+    networks:
+      - store-net
     volumes:
       - ./common/migrations:/app/migrations
     depends_on:
@@ -45,6 +49,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     ports:
       - "5001:5000"
+    networks:
+      - store-net
     volumes:
       - ./common/migrations:/app/migrations
     depends_on:
@@ -64,12 +70,17 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     ports:
       - "5002:5000"
+    networks:
+      - store-net
     volumes:
       - ./common/migrations:/app/migrations
     depends_on:
       store-migrations:
         condition: service_completed_successfully
         restart: true
+
+networks:
+  store-net:
 
 volumes:
   store-db-data:

@@ -5,6 +5,8 @@ services:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: auth
+    networks:
+      - auth-net
     volumes:
       - auth-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -17,13 +19,15 @@ services:
   auth-migrations:
     build:
       context: .
+    command: ["flask", "--app", "app.py", "db", "upgrade"]
     environment:
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       DATABASE_URL: auth-db
       DATABASE_NAME: auth
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-    command: ["flask", "--app", "app.py", "db", "upgrade"]
+    networks:
+      - auth-net
     volumes:
       - ./migrations:/app/migrations
     depends_on:
@@ -43,12 +47,17 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     ports:
       - "5000:5000"
+    networks:
+      - auth-net
     volumes:
       - ./migrations:/app/migrations
     depends_on:
       auth-migrations:
         condition: service_completed_successfully
         restart: true
+
+networks:
+  auth-net:
 
 volumes:
   auth-db-data:
