@@ -52,4 +52,9 @@ def delete_user(email: str) -> None:
         raise ServiceError("Unknown user.")
 
     db.session.delete(user)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        raise

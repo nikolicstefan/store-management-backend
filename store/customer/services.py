@@ -1,6 +1,8 @@
 from datetime import UTC, datetime
 from typing import Any
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from common.extensions import db
 from common.models import *
 from common.services import ServiceError
@@ -85,7 +87,7 @@ def create_order(requests: list[dict[str, Any]], customer_email: str) -> Order:
 
     try:
         db.session.commit()
-    except Exception:
+    except SQLAlchemyError:
         db.session.rollback()
         raise
 

@@ -1,5 +1,7 @@
 from typing import Any
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from common.extensions import db
 from common.models import *
 from common.services import ServiceError
@@ -40,6 +42,6 @@ def create_products(product_inputs: list[dict[str, Any]]) -> None:
 
     try:
         db.session.commit()
-    except Exception:
+    except SQLAlchemyError:
         db.session.rollback()
         raise
