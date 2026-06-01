@@ -1,5 +1,6 @@
 from typing import Any
 
+from sqlalchemy import case, func
 from sqlalchemy.exc import SQLAlchemyError
 
 from common.extensions import db
@@ -45,3 +46,51 @@ def create_products(product_inputs: list[dict[str, Any]]) -> None:
     except SQLAlchemyError:
         db.session.rollback()
         raise
+
+
+def get_product_statistics() -> list[dict[str, Any]]:
+    rows = (
+        db.session.query(
+            Product.name,
+            func.coalesce(
+                func.sum(
+                    case(
+                        (
+                            Order.status == "COMPLETE",
+                            OrderItem.quantity
+                        ),
+                        else_=0
+                    )
+                ),
+                0
+            )
+            .label("sold"),
+            func.coalesce(
+                func.sum(
+                    case(
+                        (
+                            Order.status.in_(["CREATED", "PENDING"]),
+                            OrderItem.quantity
+                        ),
+                        else_=0
+                    )
+                ),
+                0
+            )
+            .label("waiting")
+        )
+        .join(Product.order_items)
+        .join(OrderItem.order)
+        .group_by(Product.id, Product.name)
+        .order_by(Product.name)
+        .all()
+    )
+
+    return [
+        {
+            "name": name,
+            "sold": sold,
+            "waiting": waiting
+        }
+        for name, sold, waiting in rows
+    ]
