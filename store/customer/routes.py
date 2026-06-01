@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity
 from common.decorators import role_required
 from common.services import ServiceError
 from common.validation import ValidationError, validate_required_fields
-from customer.services import create_order, search_products
+from customer.services import create_order, get_customer_orders, search_products
 from customer.validation import validate_requests
 
 customer_bp = Blueprint("customer", __name__)
@@ -42,3 +42,10 @@ def order() -> tuple[Response, int]:
         return jsonify(message=str(e)), 400
 
     return jsonify(id=order.id), 200
+
+
+@customer_bp.route("/status", methods=["GET"])
+@role_required("CUSTOMER")
+def status() -> tuple[Response, int]:
+    orders = get_customer_orders(get_jwt_identity())
+    return jsonify(orders=orders), 200

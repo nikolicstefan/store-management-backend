@@ -92,3 +92,30 @@ def create_order(requests: list[dict[str, Any]], customer_email: str) -> Order:
         raise
 
     return order
+
+
+def get_customer_orders(customer_email: str) -> list[dict[str, Any]]:
+    orders = (
+        Order.query
+        .filter_by(customer_email=customer_email)
+        .order_by(Order.id)
+        .all()
+    )
+
+    return [
+        {
+            "products": [
+                {
+                    "categories": sorted(category.name for category in order_item.product.categories),
+                    "name": order_item.product.name,
+                    "price": order_item.price,
+                    "quantity": order_item.quantity
+                }
+                for order_item in order.order_items
+            ],
+            "price": order.total_price,
+            "status": order.status,
+            "timestamp": order.timestamp.isoformat(timespec="seconds").replace("+00:00", "Z")
+        }
+        for order in orders
+    ]
