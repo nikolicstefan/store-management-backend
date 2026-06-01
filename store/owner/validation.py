@@ -46,7 +46,7 @@ def validate_file(file: Any) -> list[dict[str, Any]]:
     if file is None:
         raise ValidationError("Field file missing.")
 
-    if not isinstance(file, FileStorage) or not file.filename.endswith(".csv"):
+    if not isinstance(file, FileStorage):
         raise ValidationError("Invalid file.")
 
     try:

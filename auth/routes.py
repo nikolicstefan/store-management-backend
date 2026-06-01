@@ -8,7 +8,7 @@ from validation import (
     validate_email,
     validate_forename,
     validate_password,
-    validate_required_fields,
+    validate_required_string_fields,
     validate_surname,
 )
 
@@ -20,11 +20,11 @@ def register_user(role: str) -> tuple[Response, int]:
     required_fields = ["forename", "surname", "email", "password"]
 
     try:
-        validate_required_fields(body, required_fields)
-        validate_forename(body.get("forename"))
-        validate_surname(body.get("surname"))
-        validate_email(body.get("email"))
-        validate_password(body.get("password"))
+        validate_required_string_fields(body, required_fields)
+        validate_forename(body["forename"])
+        validate_surname(body["surname"])
+        validate_email(body["email"])
+        validate_password(body["password"])
 
         user = create_user(
             forename=body["forename"],
@@ -55,8 +55,8 @@ def login() -> tuple[Response, int]:
     required_fields = ["email", "password"]
 
     try:
-        validate_required_fields(body, required_fields)
-        validate_email(body.get("email"))
+        validate_required_string_fields(body, required_fields)
+        validate_email(body["email"])
 
         user = authenticate_user(
             email=body["email"],
