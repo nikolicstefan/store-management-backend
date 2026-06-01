@@ -119,3 +119,26 @@ def get_customer_orders(customer_email: str) -> list[dict[str, Any]]:
         }
         for order in orders
     ]
+
+
+def set_order_complete(order_id: int, customer_email: str) -> None:
+    updated_rows = (
+        Order.query
+        .filter_by(
+            id=order_id,
+            status="PENDING",
+            customer_email=customer_email
+        )
+        .update({
+            "status": "COMPLETE"
+        })
+    )
+
+    if updated_rows == 0:
+        raise ServiceError("Invalid order id.")
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        raise
