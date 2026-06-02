@@ -94,3 +94,32 @@ def get_product_statistics() -> list[dict[str, Any]]:
         }
         for name, sold, waiting in rows
     ]
+
+
+def get_category_statistics() -> list[str]:
+    rows = (
+        db.session.query(Category.name)
+        .outerjoin(Category.products)
+        .outerjoin(Product.order_items)
+        .outerjoin(OrderItem.order)
+        .group_by(Category.id, Category.name)
+        .order_by(
+            func.coalesce(
+                func.sum(
+                    case(
+                        (
+                            Order.status == "COMPLETE",
+                            OrderItem.quantity
+                        ),
+                        else_=0
+                    )
+                ),
+                0
+            )
+            .desc(),
+            Category.name
+        )
+        .all()
+    )
+
+    return [name for name, in rows]

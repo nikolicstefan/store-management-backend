@@ -3,7 +3,7 @@ from flask import Blueprint, Response, jsonify, request
 from common.decorators import role_required
 from common.services import ServiceError
 from common.validation import ValidationError
-from owner.services import create_products, get_product_statistics
+from owner.services import create_products, get_category_statistics, get_product_statistics
 from owner.validation import validate_file
 
 owner_bp = Blueprint("owner", __name__)
@@ -27,4 +27,11 @@ def update() -> tuple[Response, int]:
 @role_required("OWNER")
 def product_statistics() -> tuple[Response, int]:
     statistics = get_product_statistics()
+    return jsonify(statistics=statistics), 200
+
+
+@owner_bp.route("/category_statistics", methods=["GET"])
+@role_required("OWNER")
+def category_statistics() -> tuple[Response, int]:
+    statistics = get_category_statistics()
     return jsonify(statistics=statistics), 200
