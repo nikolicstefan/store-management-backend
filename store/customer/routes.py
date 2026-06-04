@@ -30,16 +30,13 @@ def order() -> tuple[Response, int]:
     body = request.get_json() or {}
     required_fields = ["requests"]
 
-    try:
-        validate_required_fields(body, required_fields)
-        validate_requests(body["requests"])
+    validate_required_fields(body, required_fields)
+    validate_requests(body["requests"])
 
-        order = create_order(
-            requests=body["requests"],
-            customer_email=get_jwt_identity()
-        )
-    except (ValidationError, ServiceError) as e:
-        return jsonify(message=str(e)), 400
+    order = create_order(
+        requests=body["requests"],
+        customer_email=get_jwt_identity()
+    )
 
     return jsonify(id=order.id), 200
 
@@ -56,14 +53,11 @@ def status() -> tuple[Response, int]:
 def delivered() -> tuple[Response, int]:
     body = request.get_json() or {}
 
-    try:
-        validate_order_id(body.get("id"))
+    validate_order_id(body.get("id"))
 
-        set_order_complete(
-            order_id=body["id"],
-            customer_email=get_jwt_identity()
-        )
-    except (ValidationError, ServiceError) as e:
-        return jsonify(message=str(e)), 400
+    set_order_complete(
+        order_id=body["id"],
+        customer_email=get_jwt_identity()
+    )
 
     return jsonify(), 200

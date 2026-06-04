@@ -4,6 +4,9 @@ from werkzeug.exceptions import HTTPException
 from config import Config
 from extensions import db, jwt, migrate
 
+from services import ServiceError
+from validation import ValidationError
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -15,6 +18,14 @@ def create_app() -> Flask:
 
     from routes import auth_bp
     app.register_blueprint(auth_bp)
+
+    @app.errorhandler(ValidationError)
+    def handle_validation_error(e):
+        return jsonify(message=str(e)), 400
+
+    @app.errorhandler(ServiceError)
+    def handle_service_error(e):
+        return jsonify(message=str(e)), 400
 
     @app.errorhandler(Exception)
     def handle_unexpected_error(e):

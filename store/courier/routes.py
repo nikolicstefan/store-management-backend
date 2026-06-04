@@ -21,14 +21,11 @@ def orders_to_deliver() -> tuple[Response, int]:
 def pick_up_order() -> tuple[Response, int]:
     body = request.get_json() or {}
 
-    try:
-        validate_order_id(body.get("id"))
+    validate_order_id(body.get("id"))
 
-        set_order_pending(
-            order_id=body["id"],
-            courier_email=get_jwt_identity()
-        )
-    except (ValidationError, ServiceError) as e:
-        return jsonify(message=str(e)), 400
+    set_order_pending(
+        order_id=body["id"],
+        courier_email=get_jwt_identity()
+    )
 
     return jsonify(), 200

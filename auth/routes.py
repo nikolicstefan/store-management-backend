@@ -2,9 +2,8 @@ from flask import Blueprint, Response, g, jsonify, request
 
 from decorators import user_required
 from security import create_token
-from services import ServiceError, create_user, authenticate_user, delete_user
+from services import create_user, authenticate_user, delete_user
 from validation import (
-    ValidationError,
     validate_email,
     validate_forename,
     validate_password,
@@ -19,22 +18,19 @@ def register_user(role: str) -> tuple[Response, int]:
     body = request.get_json() or {}
     required_fields = ["forename", "surname", "email", "password"]
 
-    try:
-        validate_required_string_fields(body, required_fields)
-        validate_forename(body["forename"])
-        validate_surname(body["surname"])
-        validate_email(body["email"])
-        validate_password(body["password"])
+    validate_required_string_fields(body, required_fields)
+    validate_forename(body["forename"])
+    validate_surname(body["surname"])
+    validate_email(body["email"])
+    validate_password(body["password"])
 
-        user = create_user(
-            forename=body["forename"],
-            surname=body["surname"],
-            email=body["email"],
-            password=body["password"],
-            role=role
-        )
-    except (ValidationError, ServiceError) as e:
-        return jsonify(message=str(e)), 400
+    user = create_user(
+        forename=body["forename"],
+        surname=body["surname"],
+        email=body["email"],
+        password=body["password"],
+        role=role
+    )
 
     return jsonify(), 200
 
@@ -54,17 +50,14 @@ def login() -> tuple[Response, int]:
     body = request.get_json() or {}
     required_fields = ["email", "password"]
 
-    try:
-        validate_required_string_fields(body, required_fields)
-        validate_email(body["email"])
+    validate_required_string_fields(body, required_fields)
+    validate_email(body["email"])
 
-        user = authenticate_user(
-            email=body["email"],
-            password=body["password"]
-        )
-    except (ValidationError, ServiceError) as e:
-        return jsonify(message=str(e)), 400
-    
+    user = authenticate_user(
+        email=body["email"],
+        password=body["password"]
+    )
+
     token = create_token(user)
 
     return jsonify(accessToken=token), 200
@@ -73,11 +66,7 @@ def login() -> tuple[Response, int]:
 @auth_bp.route("/delete", methods=["POST"])
 @user_required()
 def delete() -> tuple[Response, int]:
-    try:
-        delete_user(g.user.email)
-    except ServiceError as e:
-        return jsonify(message=str(e)), 400
-
+    delete_user(g.user.email)
     return jsonify(), 200
 
 

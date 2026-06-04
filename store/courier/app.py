@@ -3,6 +3,8 @@ from werkzeug.exceptions import HTTPException
 
 from common.config import Config
 from common.extensions import db, jwt, migrate
+from common.services import ServiceError
+from common.validation import ValidationError
 
 
 def create_app() -> Flask:
@@ -15,6 +17,14 @@ def create_app() -> Flask:
 
     from courier.routes import courier_bp
     app.register_blueprint(courier_bp)
+
+    @app.errorhandler(ValidationError)
+    def handle_validation_error(e):
+        return jsonify(message=str(e)), 400
+
+    @app.errorhandler(ServiceError)
+    def handle_service_error(e):
+        return jsonify(message=str(e)), 400
 
     @app.errorhandler(Exception)
     def handle_unexpected_error(e):

@@ -1,8 +1,6 @@
 from flask import Blueprint, Response, jsonify, request
 
 from common.decorators import role_required
-from common.services import ServiceError
-from common.validation import ValidationError
 from owner.services import create_products, get_category_statistics, get_product_statistics
 from owner.validation import validate_file
 
@@ -14,12 +12,10 @@ owner_bp = Blueprint("owner", __name__)
 def update() -> tuple[Response, int]:
     file = request.files.get("file")
 
-    try:
-        product_inputs = validate_file(file)
-        create_products(product_inputs)
-    except (ValidationError, ServiceError) as e:
-        return jsonify(message=str(e)), 400
-    
+    product_inputs = validate_file(file)
+
+    create_products(product_inputs)
+
     return jsonify(), 200
 
 
