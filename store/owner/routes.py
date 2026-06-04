@@ -10,7 +10,7 @@ owner_bp = Blueprint("owner", __name__)
 
 
 @owner_bp.route("/update", methods=["POST"])
-@role_required("OWNER")
+@role_required("owner")
 def update() -> tuple[Response, int]:
     file = request.files.get("file")
 
@@ -24,14 +24,14 @@ def update() -> tuple[Response, int]:
 
 
 @owner_bp.route("/product_statistics", methods=["GET"])
-@role_required("OWNER")
+@role_required("owner")
 def product_statistics() -> tuple[Response, int]:
     statistics = get_product_statistics()
     return jsonify(statistics=statistics), 200
 
 
 @owner_bp.route("/category_statistics", methods=["GET"])
-@role_required("OWNER")
+@role_required("owner")
 def category_statistics() -> tuple[Response, int]:
     statistics = get_category_statistics()
     return jsonify(statistics=statistics), 200

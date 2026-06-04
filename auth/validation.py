@@ -6,18 +6,10 @@ class ValidationError(Exception):
     pass
 
 
-def validate_required_fields(body: Mapping[str, Any], required_fields: list[str]) -> None:
-    for field in required_fields:
-        if body.get(field) is None:
-            raise ValidationError(f"Field {field} is missing.")
-
-
 def validate_required_string_fields(body: Mapping[str, Any], required_fields: list[str]) -> None:
-    validate_required_fields(body, required_fields)
-
     for field in required_fields:
         value = body.get(field)
-        if not isinstance(value, str) or not value.strip():
+        if value is None or not isinstance(value, str) or value == "":
             raise ValidationError(f"Field {field} is missing.")
 
 
@@ -32,7 +24,7 @@ def validate_surname(surname: str) -> None:
 
 
 def validate_email(email: str) -> None:
-    regex = r'^[^@]+@[^@]+\.[^@]+$'
+    regex = r'^[^@]+@[^@]+\.[^@]{2,}$'
     if len(email) > 256 or not match(regex, email):
         raise ValidationError("Invalid email.")
 

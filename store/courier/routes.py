@@ -10,14 +10,14 @@ courier_bp = Blueprint("courier", __name__)
 
 
 @courier_bp.route("/orders_to_deliver", methods=["GET"])
-@role_required("COURIER")
+@role_required("courier")
 def orders_to_deliver() -> tuple[Response, int]:
     orders = get_orders_to_deliver()
     return jsonify(orders=orders), 200
 
 
 @courier_bp.route("/pick_up_order", methods=["POST"])
-@role_required("COURIER")
+@role_required("courier")
 def pick_up_order() -> tuple[Response, int]:
     body = request.get_json() or {}
 

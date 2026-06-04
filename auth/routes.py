@@ -41,12 +41,12 @@ def register_user(role: str) -> tuple[Response, int]:
 
 @auth_bp.route("/register_customer", methods=["POST"])
 def register_customer() -> tuple[Response, int]:
-    return register_user("CUSTOMER")
+    return register_user("customer")
 
 
 @auth_bp.route("/register_courier", methods=["POST"])
 def register_courier() -> tuple[Response, int]:
-    return register_user("COURIER")
+    return register_user("courier")
 
 
 @auth_bp.route("/login", methods=["POST"])

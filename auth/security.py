@@ -18,6 +18,6 @@ def create_token(user: User) -> str:
         additional_claims={
             "forename": user.forename,
             "surname": user.surname,
-            "role": user.role
+            "roles": user.role
         }
     )

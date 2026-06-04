@@ -44,7 +44,7 @@ def validate_price(price_str: str, line_number: int) -> float:
 
 def validate_file(file: Any) -> list[dict[str, Any]]:
     if file is None:
-        raise ValidationError("Field file missing.")
+        raise ValidationError("Field file is missing.")
 
     if not isinstance(file, FileStorage):
         raise ValidationError("Invalid file.")

@@ -11,7 +11,7 @@ customer_bp = Blueprint("customer", __name__)
 
 
 @customer_bp.route("/search", methods=["GET"])
-@role_required("CUSTOMER")
+@role_required("customer")
 def search() -> tuple[Response, int]:
     name = request.args.get("name", "")
     category = request.args.get("category", "")
@@ -25,7 +25,7 @@ def search() -> tuple[Response, int]:
 
 
 @customer_bp.route("/order", methods=["POST"])
-@role_required("CUSTOMER")
+@role_required("customer")
 def order() -> tuple[Response, int]:
     body = request.get_json() or {}
     required_fields = ["requests"]
@@ -45,14 +45,14 @@ def order() -> tuple[Response, int]:
 
 
 @customer_bp.route("/status", methods=["GET"])
-@role_required("CUSTOMER")
+@role_required("customer")
 def status() -> tuple[Response, int]:
     orders = get_customer_orders(get_jwt_identity())
     return jsonify(orders=orders), 200
 
 
 @customer_bp.route("/delivered", methods=["POST"])
-@role_required("CUSTOMER")
+@role_required("customer")
 def delivered() -> tuple[Response, int]:
     body = request.get_json() or {}
 
